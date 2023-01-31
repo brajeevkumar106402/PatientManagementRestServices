@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.patient.constants.ApplicationConstants;
 import com.patient.exception.BusinessException;
 import com.patient.exception.PatientIdNotFoundException;
 import com.patient.model.Patient;
@@ -33,16 +34,15 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public Patient CreatePatient(Patient patient) {
 		if (patient.getPatientName().isEmpty() || patient.getPatientName().length() == 0) {
-			throw new BusinessException("601", "patient name is empty");
+			throw new BusinessException(ApplicationConstants.CODE_601, ApplicationConstants.ERROR_MESSAGE_601);
 		}
 		try {
 			Patient newPatient = pateintRepository.save(patient);
 			return newPatient;
 		} catch (IllegalArgumentException ex) {
-			throw new BusinessException("602", "given patient is null" + ex.getMessage());
+			throw new BusinessException(ApplicationConstants.CODE_602, ApplicationConstants.ERROR_MESSAGE_602);
 		} catch (Exception ex) {
-			throw new BusinessException("603",
-					"something went woring in service layer while saving the patient" + ex.getMessage());
+			throw new BusinessException(ApplicationConstants.CODE_603, ApplicationConstants.ERROR_MESSAGE_603);
 		}
 	}
 

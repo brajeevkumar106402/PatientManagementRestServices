@@ -60,11 +60,12 @@ public class PatientController {
 			return new ResponseEntity<>(
 					new String(ApplicationConstants.SUCCESSFUL_PATIENT_MESSAGE + newPatient.getPatient_id()),
 					HttpStatus.CREATED);
-		} catch (BusinessException e) {
-			ControllerException ce = new ControllerException(e.getErrorCode(), e.getErrorMessage());
-			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
-		} catch (Exception e) {
-			ControllerException ce = new ControllerException("611", "something went woring in controller");
+		} //catch (BusinessException e) {
+			//ControllerException ce = new ControllerException(e.getErrorCode(), e.getErrorMessage());
+			//return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
+	//	} 
+		catch (Exception e) {
+			ControllerException ce = new ControllerException(ApplicationConstants.CODE_611, ApplicationConstants.ERROR_MESSAGE_611);
 			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
 		}
 	}
