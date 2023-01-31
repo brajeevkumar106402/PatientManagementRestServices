@@ -17,6 +17,12 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @Entity
+/**
+ * 
+ * @author BK106402 This class is used as entity class for holding Telephone
+ *         details of Patient
+ *
+ */
 public class Telephone {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

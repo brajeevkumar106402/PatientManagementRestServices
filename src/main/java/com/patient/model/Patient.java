@@ -24,20 +24,26 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Patient {	
+/**
+ * 
+ * @author BK106402 This class is used as entity class for holding details of
+ *         Patient
+ *
+ */
+public class Patient {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long patient_id;
-	@Column(name = "patient_name", unique = true)
+	@Column(name = "patient_name")
 	private String patientName;
 	private String dateOfBirth;
 	private String genderCode;
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "pc_fid", referencedColumnName = "patient_id")
+	@JoinColumn(name = "patient_fk", referencedColumnName = "patient_id")
 	private List<Address> addressList = new ArrayList<>();
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "pc_fid", referencedColumnName = "patient_id")
+	@JoinColumn(name = "patient_fk", referencedColumnName = "patient_id")
 	private List<Telephone> telephoneList = new ArrayList<>();
 
 }
