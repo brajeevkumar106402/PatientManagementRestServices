@@ -5,17 +5,23 @@ import java.util.List;
 import com.patient.model.Patient;
 
 public interface PatientService {
-
-	List<Patient> getAllPatients();
-
-	Patient getPatientByName(String name);
+	
+	Patient CreatePatient(Patient patient);
+	
+	Patient updatePatient(Patient patient);
+	
+	Patient getPatientByName(String patientName);
 
 	Patient getPatientById(Long id);
 
-	Patient saveOrUpdate(Patient patient);
-
-	Patient updatePatient(Patient patient);
+	List<Patient> getPatients();	
 
 	void deletePatient(Long patientId);
+
+	boolean isPateintExistsById(Long id);
+
+	boolean isPateintExistsByName(String name);
+	
+//	boolean isPatientExist(Long patientId);
 
 }
