@@ -1,0 +1,8 @@
+com.patient
+com.patient.constants
+com.patient.controller
+com.patient.exception
+com.patient.model
+com.patient.repo
+com.patient.service
+com.patient.service.impl
