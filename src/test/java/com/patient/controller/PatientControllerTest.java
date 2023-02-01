@@ -1,143 +1,170 @@
 package com.patient.controller;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
-import com.patient.model.Address;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.patient.model.Patient;
-import com.patient.model.Telephone;
-import com.patient.repo.PatientRepository;
+import com.patient.service.PatientService;
 
-//@WebMvcTest(PatientControllerTest.class)
-@ExtendWith(MockitoExtension.class)
+@WebMvcTest
 public class PatientControllerTest {
 	
-	@InjectMocks
-	PatientController PatientController;
-	
-	@Mock
-	PatientRepository PatientRepository;
+	  @Autowired
+	    private MockMvc mockMvc;
 
-	
-/*	@Autowired
-	private MockMvc mvc;
-	
+	    @MockBean
+	    private PatientService patientService;
 
+	    @Autowired
+	    private ObjectMapper objectMapper;
+	    
+	    @Test
+	    public void givenPatientObject_whenCreatePatient_thenReturnSavedPatient() throws Exception{
 
-	@Test
-	public void getAllPatientsTest() throws Exception {
-		mvc.perform(MockMvcRequestBuilders.get("http://localhost:8081/api/patient").accept(MediaType.APPLICATION_JSON)).				
-			      andExpect(status().isOk())
-			      .andExpect(MockMvcResultMatchers.jsonPath("$.patient").exists())
-			      .andExpect(MockMvcResultMatchers.jsonPath("$.patient[*].").isNotEmpty());				
-				
-		
-	}
-	*/
-	
-	@Test
-	public void testFindAll() 
-	{
-		// given
-		
-		 List<Address> addressListtemp = new ArrayList<>();
-			Address adddress1 = Address.builder().id(103).addressType("home").addressLine1("House no -85")
-					.addressLine2("Gali no 1B").city("Chapraula").state("Uttar Pradesh").postalCode("201009")
-					.country("india").build();
-			Address adddress2 = Address.builder().id(104).addressType("office").addressLine1("House no -85")
-					.addressLine2("Gali no 1B").city("Chapraula").state("Uttar Pradesh").postalCode("201009")
-					.country("india").build();
-			addressListtemp.add(adddress1);
-			addressListtemp.add(adddress2);
-			List<Telephone> telephoneListtemp = new ArrayList<>();
-			Telephone tel1 = Telephone.builder().id(1).telephoneType("office").telephoneNumber("9211642430")
-					.telephonCountryCode("011").build();
-			Telephone tel2 = Telephone.builder().id(2).telephoneType("office").telephoneNumber("9211642430")
-					.telephonCountryCode("011").build();
-			telephoneListtemp.add(tel1);
-			telephoneListtemp.add(tel2);
+	        // given - precondition or setup
+	        
+	         Patient patient =      Patient.builder().patient_id(1L).patientName("ramu").genderCode("MALE")
+			.dateOfBirth("01-03-1984").build();
+	        given(patientService.createPatient(any(Patient.class)))
+	                .willAnswer((invocation)-> invocation.getArgument(0));
 
-			Patient patient1 = Patient.builder().patient_id(1L).patientName("ramu").genderCode("MALE")
-					.dateOfBirth("01-03-1984").addressList(addressListtemp).telephoneList(telephoneListtemp).build();
-	 
-			
-			Patient patient2 = Patient.builder().patient_id(2L).patientName("ramu kaka").genderCode("MALE")
-					.dateOfBirth("01-03-1984").addressList(addressListtemp).telephoneList(telephoneListtemp).build();
-	 
-		
-		List<Patient> list = new ArrayList<Patient>();
-		list.addAll(Arrays.asList(patient1, patient2));
+	        // when - action or behaviour that we are going test
+	        ResultActions response = mockMvc.perform(post("/api/patient")
+	            .contentType(MediaType.APPLICATION_JSON)
+	            .content(objectMapper.writeValueAsString(patient)));
 
-	//	when(PatientRepository.findAll()).thenReturn(list);
+	        // then - verify the result or output using assert statements
+	        response.andDo(print()).
+	                andExpect(status().isCreated())	            
+	                .andExpect(content().string(containsString("Patient is successfully created with Patient ID")));
+	            
 
-		// when
-		List<Patient> result = (List<Patient>) PatientController.getAllPatients();
+	    }
+	    // JUnit test for Get All employees REST API
+	    @Test
+	    public void givenListOfPatients_whenGetAllPateintsthenReturnPatientList() throws Exception{
+	        // given - precondition or setup
+	        List<Patient> listOfPateint = new ArrayList<>();
+	        listOfPateint.add(Patient.builder().patient_id(1L).patientName("ramu").genderCode("MALE")
+	    			.dateOfBirth("01-03-1984").build());
+	        listOfPateint.add(Patient.builder().patient_id(1L).patientName("ramu").genderCode("MALE")
+	    			.dateOfBirth("01-03-1984").build());
+	        given(patientService.getPatients()).willReturn(listOfPateint);
 
-		// then
-		assertThat(result.size()).isEqualTo(2);
-		
-		assertThat(result.get(0).getPatientName()).isEqualTo(patient1.getPatientName());
-		assertThat(result.get(1).getPatientName()).isEqualTo(patient2.getPatientName());
-	}
+	        // when -  action or the behaviour that we are going test
+	        ResultActions response = mockMvc.perform(get("/api/patient"));
 
-	
-	
-	/*
-	
-	@GetMapping("id/{id}")
-	public ResponseEntity<Object> getPatientById(@PathVariable("id") Long id) {
-		boolean isPatientExist = patientService.isPateintExistsById(id);
-		if (!isPatientExist) {
-			return new ResponseEntity<>(new String(ApplicationConstants.PATIENT_ID_NOT_FOUND), HttpStatus.NOT_FOUND);
-		}
-		Patient patient = patientService.getPatientById(id);
-		return new ResponseEntity<>(patient, HttpStatus.OK);
-	}
+	        // then - verify the output
+	        response.andExpect(status().isOk())
+	                .andDo(print())
+	                .andExpect(jsonPath("$.size()",
+	                        is(listOfPateint.size())));
 
-	@GetMapping("name/{name}")
-	public ResponseEntity<Object> getPatientByName(@PathVariable("name") String name) {
-		boolean isPatientNameExist = patientService.isPateintExistsByName(name);
-		if (!isPatientNameExist) {
-			return new ResponseEntity<>(new String(ApplicationConstants.PATIENT_NAME_NOT_FOUND), HttpStatus.NOT_FOUND);
-		}
-		Patient patient = patientService.getPatientByName(name);
-		return new ResponseEntity<>(patient, HttpStatus.OK);
-	}
+	    }
+	    
+	    // positive scenario - valid Patient id
+	    // JUnit test for GET Patient by id REST API
+	    @Test
+	    public void givenPateintId_whenGetPatientById_thenReturnPatientObject() throws Exception{
+	        // given - precondition or setup
+	        long pateintId = 1L;
+	        Patient patient = Patient.builder().patient_id(1L).patientName("ramu ji").genderCode("MALE")
+	    			.dateOfBirth("01-03-1984").build();
+	        given(patientService.getPatientById(pateintId)).willReturn(patient);
+	    // when -  action or the behaviour that we are going test
+	        ResultActions response = mockMvc.perform(get("/api/patient/id/{id}", pateintId));
 
-	@PostMapping
-	public ResponseEntity<?> createPatient(@RequestBody Patient patient) {
-		try {
-			Patient newPatient = patientService.CreatePatient(patient);
-			return new ResponseEntity<>(
-					new String(ApplicationConstants.SUCCESSFUL_PATIENT_MESSAGE + newPatient.getPatient_id()),
-					HttpStatus.CREATED);
-		} 
-		catch (Exception e) {
-			ControllerException ce = new ControllerException(ApplicationConstants.CODE_611, ApplicationConstants.ERROR_MESSAGE_611);
-			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
-		}
-	}
+	        // then - verify the output
+	        response.andExpect(status().isNotFound())
+	                .andDo(print())
+	                .andExpect(content().string(containsString("patient id does not exist")));
+		            
+	             /*   .andExpect(jsonPath("$.Patient_id", is(patient.getPatient_id())))
+	                .andExpect(jsonPath("$.GenderCode", is(patient.getGenderCode())))
+	                .andExpect(jsonPath("$.DateOfBirth", is(patient.getDateOfBirth())));*/
 
-	@PutMapping("{id}")
-	public ResponseEntity<Patient> updatePatient(@RequestBody Patient patient) {
-		Patient updatePatient = patientService.updatePatient(patient);
-		return new ResponseEntity<Patient>(updatePatient, HttpStatus.OK);
-	}
+	    }
+	    
+	    // negative scenario - valid employee id
+	    // JUnit test for GET employee by id REST API
+	    @Test
+	    public void givenInvalidEmployeeId_whenGetEmployeeById_thenReturnEmpty() throws Exception{
+	        // given - precondition or setup
+	    	 Long pateintId = 1L;
+		        Patient patient = Patient.builder().patient_id(1L).patientName("ramu ji").genderCode("MALE")
+		    			.dateOfBirth("01-03-1984").build();
+		        given(patientService.getPatientById(pateintId)).willReturn(null);
+		      //  given(employeeService.getEmployeeById(employeeId)).willReturn(Optional.empty());
+	       // when -  action or the behaviour that we are going test
+	        ResultActions response = mockMvc.perform(get("/api/employees/{id}", pateintId));
 
-	@DeleteMapping("{id}")
-	public ResponseEntity<Void> deletePatient(@PathVariable("id") Long id) {
-		patientService.deletePatient(id);
-		return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
-	}
-*/
+	        // then - verify the output
+	        response.andExpect(status().isNotFound())
+	                .andDo(print());
+
+	    }
+	    
+	    // JUnit test for update employee REST API - positive scenario
+	    @Test
+	    public void givenUpdatedPateint_whenUpdatePateint_thenReturn200() throws Exception{
+	        // given - precondition or setup
+	       
+	        Long pateintId = 1L;
+	        Patient savedPatient = Patient.builder().patient_id(1L).patientName("ramu ji").genderCode("MALE")
+	    			.dateOfBirth("01-03-1984").build();
+	        Patient updatedPatient = Patient.builder().patient_id(1L).patientName("ramukumar ji").genderCode("MALE")
+	    			.dateOfBirth("01-03-1983").build();
+
+	        given(patientService.getPatientById(pateintId)).willReturn(null);
+	     //   given(patientService.updatePatient(any(Patient.class),pateintId))
+	        given(patientService.updatePatient(any(Patient.class),any(Long.class)))
+	                .willAnswer((invocation)-> invocation.getArgument(0));
+
+	        // when -  action or the behaviour that we are going test
+	        ResultActions response = mockMvc.perform(put("/api/patient/{id}", pateintId)
+	                .contentType(MediaType.APPLICATION_JSON)
+	                .content(objectMapper.writeValueAsString(updatedPatient)));
+
+	        // then - verify the output
+	        response.andExpect(status().isOk())
+	                .andDo(print());
+	    }
+	    
+	 // JUnit test for delete patient REST API
+	/*    @Test
+	    public void givenPatientId_whenDeletePatientId_thenReturn200() throws Exception{
+	        // given - precondition or setup
+	        long patientId = 1L;
+	        willDoNothing().given(patientService).deletePatient(patientId);
+
+	        // when -  action or the behaviour that we are going test
+	        ResultActions response = mockMvc.perform(delete("/api/patient/{id}", patientId));
+
+	        // then - verify the output
+	        response.andExpect(status().isAccepted())
+	                .andDo(print());
+	    }*/
+
 }

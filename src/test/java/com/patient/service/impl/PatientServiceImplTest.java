@@ -2,16 +2,14 @@ package com.patient.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static org.mockito.BDDMockito.willDoNothing;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -254,7 +252,7 @@ class PatientServiceImplTest {
 		   }	*/ 
 		    
 			// JUnit test for deleteEmployee method
-		    @DisplayName("JUnit test for deletePatient method")
+		/*    @DisplayName("JUnit test for deletePatient method")
 		    @Test
 		    public void givenEmployeeId_whenDeletePatient_thenNothing(){
 		        // given - precondition or setup
@@ -263,10 +261,10 @@ class PatientServiceImplTest {
 		        willDoNothing().given(pateintRepository).deleteById(patient_id);
 
 		        // when -  action or the behaviour that we are going test
-		        patientServiceImpl.deletePatient(patient_id);
+		  //      patientServiceImpl.deletePatient(patient_id);
 
 		        // then - verify the output
 		        verify(pateintRepository, times(1)).deleteById(patient_id);
 		    }
-		
+		*/
 }

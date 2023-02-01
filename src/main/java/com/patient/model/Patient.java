@@ -39,11 +39,11 @@ public class Patient {
 	private String dateOfBirth;
 	private String genderCode;
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "patient_fk", referencedColumnName = "patient_id")
+	@JoinColumn(name = "patient_fk", referencedColumnName = "patient_id",nullable=false)
 	private List<Address> addressList = new ArrayList<>();
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "patient_fk", referencedColumnName = "patient_id")
+	@JoinColumn(name = "patient_fk", referencedColumnName = "patient_id",nullable=false)
 	private List<Telephone> telephoneList = new ArrayList<>();
 
 }

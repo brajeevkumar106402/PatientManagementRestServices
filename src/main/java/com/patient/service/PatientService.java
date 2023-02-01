@@ -21,7 +21,7 @@ public interface PatientService {
 
 	List<Patient> getPatients();
 
-	void deletePatient(Long patientId);
+	String deletePatient(Long patientId);
 
 	boolean isPateintExistsById(Long id);
 

@@ -8,15 +8,19 @@ import org.springframework.stereotype.Service;
 
 import com.patient.constants.ApplicationConstants;
 import com.patient.exception.BusinessException;
+import com.patient.exception.PatientIdNotFoundException;
 import com.patient.model.Patient;
 import com.patient.repo.PatientRepository;
 import com.patient.service.PatientService;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * @author BK106402 Service layer of Patient application which had reference of
- *         DB repoistory and all methods related with CRUD activity
+ * @author BK106402 
+ * Service layer of Patient application which had reference of
+ *  DB repoistory and all methods related with CRUD activity
  */
+@Slf4j
 @Service
 public class PatientServiceImpl implements PatientService {
 
@@ -30,6 +34,7 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public Patient createPatient(Patient patient) {
+		 log.info("creating patient");
 		try {
 			Patient newPatient = pateintRepository.save(patient);
 			return newPatient;
@@ -48,6 +53,7 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public Patient updatePatient(Patient patient, Long patient_Id) {
+		 log.info("Update patient by patientId : {} ", patient_Id);
 		Patient existingPatient = pateintRepository.findById(patient_Id).get();
 		existingPatient.setPatientName(patient.getPatientName());
 		existingPatient.setDateOfBirth(patient.getDateOfBirth());
@@ -65,16 +71,19 @@ public class PatientServiceImpl implements PatientService {
 	 * @return nothing
 	 */
 	@Override
-	public void deletePatient(Long patientId) {
-		try {
-			pateintRepository.deleteById(patientId);
-		} catch (IllegalArgumentException ex) {
-			throw new BusinessException(ApplicationConstants.CODE_604, ApplicationConstants.ERROR_MESSAGE_604);
-		} catch (Exception ex) {
-			throw new BusinessException(ApplicationConstants.CODE_605, ApplicationConstants.ERROR_MESSAGE_605);
-		}
-
-	}
+	public String deletePatient(Long patient_id) {
+		 log.info("delete method of Patient service impl");
+	        Boolean isPatientExist = pateintRepository.isPateintExistsById(patient_id);
+	        if(!isPatientExist){
+	            log.error("patientId : {} does not exist to delete", patient_id);
+	            throw new PatientIdNotFoundException("Patient Id not found in db with given patient id = " + patient_id);
+	        }
+	        pateintRepository.deleteById(patient_id);
+	        return "Patient successfully deleted with patient id = " + patient_id;
+	}	
+		
+		
+		
 
 	/**
 	 * This method retrieve all Patient records from Database
@@ -84,6 +93,7 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public List<Patient> getPatients() {
+		 log.info("calling getPatient methods ");
 		List<Patient> patientList = null;
 		try {
 			patientList = pateintRepository.findAll();
@@ -103,6 +113,7 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public Patient getPatientById(Long patientId) {
+		 log.info("retreiving patient  by its patientId : {}", patientId);
 		try {
 			return pateintRepository.findById(patientId).get();
 		} catch (IllegalArgumentException ex) {
@@ -122,6 +133,7 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public Patient getPatientByName(String patientName) {
+		 log.info("retreiving patient  by its name : {}", patientName);
 		try {
 			return pateintRepository.findByPatientName(patientName).get();
 		} catch (IllegalArgumentException ex) {

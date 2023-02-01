@@ -18,6 +18,7 @@ import com.patient.constants.ApplicationConstants;
 import com.patient.exception.ControllerException;
 import com.patient.model.Patient;
 import com.patient.service.PatientService;
+import lombok.extern.slf4j.Slf4j; 
 
 @RestController
 @RequestMapping("api/patient")
@@ -107,11 +108,15 @@ public class PatientController {
 
 	/**
 	 * This method delete patient based on Id
+	 * @return successful message if Patient is successfully deleted or
+	 *         otherwise throws exception with unsuccessful message
 	 */
+
 	@DeleteMapping("{id}")
-	public ResponseEntity<Void> deletePatient(@PathVariable("id") Long id) {
-		patientService.deletePatient(id);
-		return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
-	}
+	public ResponseEntity<String> deletePatient(@PathVariable("id") Long id) {	
+	        return new ResponseEntity<>(patientService.deletePatient(id), HttpStatus.OK);
+	    }
+	
+	
 
 }
