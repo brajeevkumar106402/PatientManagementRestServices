@@ -15,10 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.patient.constants.ApplicationConstants;
-import com.patient.exception.ControllerException;
+import com.patient.exception.PatientIdNotFoundException;
 import com.patient.model.Patient;
 import com.patient.service.PatientService;
-import lombok.extern.slf4j.Slf4j; 
 
 @RestController
 @RequestMapping("api/patient")
@@ -49,14 +48,13 @@ public class PatientController {
 	 * 
 	 * @return Patient
 	 */
-	@GetMapping("id/{id}")
+	@GetMapping("/id/{id}")
 	public ResponseEntity<Object> getPatientById(@PathVariable("id") Long id) {
 		boolean isPatientExist = patientService.isPateintExistsById(id);
 		if (!isPatientExist) {
 			return new ResponseEntity<>(new String(ApplicationConstants.PATIENT_ID_NOT_FOUND), HttpStatus.NOT_FOUND);
 		}
-		Patient patient = patientService.getPatientById(id);
-		return new ResponseEntity<>(patient, HttpStatus.OK);
+		return new ResponseEntity<>(patientService.getPatientById(id), HttpStatus.OK);
 	}
 
 	/**
@@ -64,14 +62,13 @@ public class PatientController {
 	 * 
 	 * @return Patient
 	 */
-	@GetMapping("name/{name}")
+	@GetMapping("/name/{name}")
 	public ResponseEntity<Object> getPatientByName(@PathVariable("name") String name) {
 		boolean isPatientNameExist = patientService.isPateintExistsByName(name);
 		if (!isPatientNameExist) {
 			return new ResponseEntity<>(new String(ApplicationConstants.PATIENT_NAME_NOT_FOUND), HttpStatus.NOT_FOUND);
 		}
-		Patient patient = patientService.getPatientByName(name);
-		return new ResponseEntity<>(patient, HttpStatus.OK);
+		return new ResponseEntity<>(patientService.getPatientByName(name), HttpStatus.OK);
 	}
 
 	/**
@@ -81,17 +78,16 @@ public class PatientController {
 	 *         exception
 	 */
 	@PostMapping
-	public ResponseEntity<?> createPatient(@RequestBody Patient patient) {
-		try {
-			Patient newPatient = patientService.createPatient(patient);
+	public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
+	//	try {
+			//Patient newPatient = patientService.createPatient(patient);
 			return new ResponseEntity<>(
-					new String(ApplicationConstants.SUCCESSFUL_PATIENT_MESSAGE + newPatient.getPatient_id()),
+					patientService.createPatient(patient),
 					HttpStatus.CREATED);
-		} catch (Exception e) {
-			ControllerException ce = new ControllerException(ApplicationConstants.CODE_611,
-					ApplicationConstants.ERROR_MESSAGE_611);
-			return new ResponseEntity<ControllerException>(ce, HttpStatus.BAD_REQUEST);
-		}
+		//} catch (Exception e) {
+		//	PatientIdNotFoundException ce = new PatientIdNotFoundException(ApplicationConstants.ERROR_MESSAGE_611);
+		//	return new ResponseEntity<PatientIdNotFoundException>(ce, HttpStatus.BAD_REQUEST);
+		//}
 	}
 
 	/**
@@ -102,21 +98,19 @@ public class PatientController {
 	 */
 	@PutMapping("{id}")
 	public ResponseEntity<Patient> updatePatient(@RequestBody Patient patient, @PathVariable("id") Long patient_Id) {
-		Patient updatePatient = patientService.updatePatient(patient, patient_Id);
-		return new ResponseEntity<Patient>(updatePatient, HttpStatus.OK);
+		return new ResponseEntity<Patient>(patientService.updatePatient(patient, patient_Id), HttpStatus.OK);
 	}
 
 	/**
 	 * This method delete patient based on Id
-	 * @return successful message if Patient is successfully deleted or
-	 *         otherwise throws exception with unsuccessful message
+	 * 
+	 * @return successful message if Patient is successfully deleted or otherwise
+	 *         throws exception with unsuccessful message
 	 */
 
 	@DeleteMapping("{id}")
-	public ResponseEntity<String> deletePatient(@PathVariable("id") Long id) {	
-	        return new ResponseEntity<>(patientService.deletePatient(id), HttpStatus.OK);
-	    }
-	
-	
+	public ResponseEntity<String> deletePatient(@PathVariable("id") Long id) {
+		return new ResponseEntity<>(patientService.deletePatient(id), HttpStatus.OK);
+	}
 
 }

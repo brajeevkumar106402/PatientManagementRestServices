@@ -7,18 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.patient.constants.ApplicationConstants;
-import com.patient.exception.BusinessException;
 import com.patient.exception.PatientIdNotFoundException;
 import com.patient.model.Patient;
 import com.patient.repo.PatientRepository;
 import com.patient.service.PatientService;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * 
- * @author BK106402 
- * Service layer of Patient application which had reference of
- *  DB repoistory and all methods related with CRUD activity
+ * @author BK106402 Service layer of Patient application which had reference of
+ *         DB repoistory and all methods related with CRUD activity
  */
 @Slf4j
 @Service
@@ -34,14 +33,12 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public Patient createPatient(Patient patient) {
-		 log.info("creating patient");
+		log.info("creating patient");
 		try {
 			Patient newPatient = pateintRepository.save(patient);
 			return newPatient;
-		} catch (IllegalArgumentException ex) {
-			throw new BusinessException(ApplicationConstants.CODE_602, ApplicationConstants.ERROR_MESSAGE_602);
 		} catch (Exception ex) {
-			throw new BusinessException(ApplicationConstants.CODE_603, ApplicationConstants.ERROR_MESSAGE_603);
+			throw new PatientIdNotFoundException(ApplicationConstants.ERROR_MESSAGE_603);
 		}
 	}
 
@@ -53,14 +50,22 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public Patient updatePatient(Patient patient, Long patient_Id) {
-		 log.info("Update patient by patientId : {} ", patient_Id);
+		log.info("Update patient by patientId : {} ", patient_Id);
+		Patient updatedPatient;
 		Patient existingPatient = pateintRepository.findById(patient_Id).get();
-		existingPatient.setPatientName(patient.getPatientName());
-		existingPatient.setDateOfBirth(patient.getDateOfBirth());
-		existingPatient.setGenderCode(patient.getGenderCode());
-		existingPatient.setAddressList(patient.getAddressList());
-		existingPatient.setTelephoneList(patient.getTelephoneList());
-		Patient updatedPatient = pateintRepository.save(existingPatient);
+		if (existingPatient != null) {
+			existingPatient.setPatient_id(patient_Id);
+			existingPatient.setPatientName(patient.getPatientName());
+			existingPatient.setDateOfBirth(patient.getDateOfBirth());
+			existingPatient.setGenderCode(patient.getGenderCode());
+			existingPatient.setAddressList(patient.getAddressList());
+			existingPatient.setTelephoneList(patient.getTelephoneList());
+			updatedPatient = pateintRepository.save(existingPatient);
+			// return updatedPatient;
+		} else {
+			throw new NoSuchElementException("No value present");
+			// return null;
+		}
 		return updatedPatient;
 	}
 
@@ -72,18 +77,15 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public String deletePatient(Long patient_id) {
-		 log.info("delete method of Patient service impl");
-	        Boolean isPatientExist = pateintRepository.isPateintExistsById(patient_id);
-	        if(!isPatientExist){
-	            log.error("patientId : {} does not exist to delete", patient_id);
-	            throw new PatientIdNotFoundException("Patient Id not found in db with given patient id = " + patient_id);
-	        }
-	        pateintRepository.deleteById(patient_id);
-	        return "Patient successfully deleted with patient id = " + patient_id;
-	}	
-		
-		
-		
+		log.info("delete method of Patient service impl");
+		Boolean isPatientExist = pateintRepository.existsById(patient_id);
+		if (!isPatientExist) {
+			log.error("patientId : {} does not exist to delete", patient_id);
+			throw new PatientIdNotFoundException("Patient Id not found in db with given patient id = " + patient_id);
+		}
+		pateintRepository.deleteById(patient_id);
+		return "Patient successfully deleted with patient id = " + patient_id;
+	}
 
 	/**
 	 * This method retrieve all Patient records from Database
@@ -93,15 +95,12 @@ public class PatientServiceImpl implements PatientService {
 
 	@Override
 	public List<Patient> getPatients() {
-		 log.info("calling getPatient methods ");
-		List<Patient> patientList = null;
-		try {
-			patientList = pateintRepository.findAll();
-		} catch (Exception ex) {
-			throw new BusinessException(ApplicationConstants.CODE_606, ApplicationConstants.ERROR_MESSAGE_606);
+		log.info("calling getPatient methods ");
+		List<Patient> patientList = pateintRepository.findAll();
+		if (patientList.isEmpty()) {
+			log.info("No record exists in Patient List");
+			throw new PatientIdNotFoundException(ApplicationConstants.ERROR_MESSAGE_607);
 		}
-		if (patientList.isEmpty())
-			throw new BusinessException(ApplicationConstants.CODE_607, ApplicationConstants.ERROR_MESSAGE_607);
 		return patientList;
 	}
 
@@ -113,16 +112,8 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public Patient getPatientById(Long patientId) {
-		 log.info("retreiving patient  by its patientId : {}", patientId);
-		try {
-			return pateintRepository.findById(patientId).get();
-		} catch (IllegalArgumentException ex) {
-			throw new BusinessException(ApplicationConstants.CODE_608, ApplicationConstants.ERROR_MESSAGE_608);
-		} catch (NoSuchElementException ex) {
-			throw new BusinessException(ApplicationConstants.CODE_609, ApplicationConstants.ERROR_MESSAGE_609);
-		} catch (Exception ex) {
-			throw new BusinessException(ApplicationConstants.CODE_610, ApplicationConstants.ERROR_MESSAGE_610);
-		}
+		log.info("retreiving patient  by its patientId : {}", patientId);
+		return pateintRepository.findById(patientId).get();
 	}
 
 	/**
@@ -133,16 +124,8 @@ public class PatientServiceImpl implements PatientService {
 	 */
 	@Override
 	public Patient getPatientByName(String patientName) {
-		 log.info("retreiving patient  by its name : {}", patientName);
-		try {
-			return pateintRepository.findByPatientName(patientName).get();
-		} catch (IllegalArgumentException ex) {
-			throw new BusinessException(ApplicationConstants.CODE_611, ApplicationConstants.ERROR_MESSAGE_611);
-		} catch (NoSuchElementException ex) {
-			throw new BusinessException(ApplicationConstants.CODE_612, ApplicationConstants.ERROR_MESSAGE_612);
-		} catch (Exception ex) {
-			throw new BusinessException(ApplicationConstants.CODE_613, ApplicationConstants.ERROR_MESSAGE_613);
-		}
+		log.info("retreiving patient  by its name : {}", patientName);
+		return pateintRepository.findByPatientName(patientName).get();
 	}
 
 	/**
@@ -164,13 +147,6 @@ public class PatientServiceImpl implements PatientService {
 	@Override
 	public boolean isPateintExistsByName(String name) {
 		return pateintRepository.isPateintExistsByName(name);
-	}
-
-	/*
-	 * Constructor of Service class
-	 */
-	public PatientServiceImpl(PatientRepository pateintRepository) {
-		this.pateintRepository = pateintRepository;
 	}
 
 }

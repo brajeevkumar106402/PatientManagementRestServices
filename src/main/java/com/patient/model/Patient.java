@@ -38,11 +38,11 @@ public class Patient {
 	private String patientName;
 	private String dateOfBirth;
 	private String genderCode;
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumn(name = "patient_fk", referencedColumnName = "patient_id",nullable=false)
 	private List<Address> addressList = new ArrayList<>();
 
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
 	@JoinColumn(name = "patient_fk", referencedColumnName = "patient_id",nullable=false)
 	private List<Telephone> telephoneList = new ArrayList<>();
 
