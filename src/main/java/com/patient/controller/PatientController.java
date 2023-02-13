@@ -63,11 +63,11 @@ public class PatientController {
 	 * @return Patient
 	 */
 	@GetMapping("/name/{name}")
-	public ResponseEntity<Object> getPatientByName(@PathVariable("name") String name) {
-		boolean isPatientNameExist = patientService.isPateintExistsByName(name);
-		if (!isPatientNameExist) {
-			return new ResponseEntity<>(new String(ApplicationConstants.PATIENT_NAME_NOT_FOUND), HttpStatus.NOT_FOUND);
-		}
+	public ResponseEntity<List<Patient>> getPatientByName(@PathVariable("name") String name) {
+		//boolean isPatientNameExist = patientService.isPateintExistsByName(name);
+	////	if (!isPatientNameExist) {
+			//return new ResponseEntity<>(new String(ApplicationConstants.PATIENT_NAME_NOT_FOUND), HttpStatus.NOT_FOUND);
+	//	}
 		return new ResponseEntity<>(patientService.getPatientByName(name), HttpStatus.OK);
 	}
 

@@ -15,7 +15,7 @@ public interface PatientService {
 
 	Patient updatePatient(Patient patient, Long patient_Id);
 
-	Patient getPatientByName(String patientName);
+	List<Patient> getPatientByName(String patientName);
 
 	Patient getPatientById(Long id);
 

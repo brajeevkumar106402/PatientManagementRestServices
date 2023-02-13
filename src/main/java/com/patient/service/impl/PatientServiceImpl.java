@@ -123,9 +123,9 @@ public class PatientServiceImpl implements PatientService {
 	 * @return Patient records
 	 */
 	@Override
-	public Patient getPatientByName(String patientName) {
+	public List<Patient> getPatientByName(String patientName) {
 		log.info("retreiving patient  by its name : {}", patientName);
-		return pateintRepository.findByPatientName(patientName).get();
+		return pateintRepository.findByPatientName(patientName);
 	}
 
 	/**

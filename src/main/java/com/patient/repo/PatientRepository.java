@@ -1,6 +1,6 @@
 package com.patient.repo;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,5 +23,7 @@ public interface PatientRepository extends JpaRepository<Patient, Long> {
 	@Query("select case when count(p)> 0 then true else false end from Patient p where patient_name = ?1")
 	Boolean isPateintExistsByName(String name);
 
-	Optional<Patient> findByPatientName(String patientName);
+	//Optional<Patient> findByPatientName(String patientName);
+	
+	List<Patient> findByPatientName(String patientName);
 }
